@@ -14,7 +14,7 @@
 /*****************************************************************************/
 /*                             GLOBAL VARIABLES                              */
 /*****************************************************************************/
-int hFile = 0;
+Logger logger;
 
 /*****************************************************************************/
 /*                             HELPER FUNCTIONS                              */
@@ -24,7 +24,9 @@ int hFile = 0;
 __declspec(dllexport) void ordinal_1() {}
 
 /* Logging */
-#define Log(...) // nothing
+#define Log(...) {  \
+    logger.write(); \
+} 
 
 /*****************************************************************************/
 /*                                   HOOKS                                   */
@@ -61,19 +63,19 @@ BOOL APIENTRY DllMain( HMODULE hModule,
                      )
 {
     LONG error;
-    Logger logger;
+    
     switch (ul_reason_for_call)
     {
     case DLL_PROCESS_ATTACH:
         
+        logger.init();
+        logger.write();
+
         DetourRestoreAfterWith();
         DetourTransactionBegin();
         DetourUpdateThread(GetCurrentThread());
         DetourAttach(&True_CreateFile, Hook_CreateFile);
-        error = DetourTransactionCommit();
-        
-        logger.init();
-        logger.write();
+        error = DetourTransactionCommit();     
 
         if (error == NO_ERROR) {
             Log("Detoury successfully hooked the functions.\n");
@@ -89,8 +91,6 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     case DLL_THREAD_DETACH:
         break;
     case DLL_PROCESS_DETACH:
-        /** Close the handle of the file */
-        _close(hFile);
         break;
     }
     return TRUE;
