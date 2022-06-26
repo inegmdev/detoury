@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\spdlog">
+      <UniqueIdentifier>{26f81a86-2a39-471c-b5a8-0e53fedde328}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -28,6 +31,27 @@
     </ClCompile>
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\spdlog\src\async.cpp">
+      <Filter>Source Files\spdlog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\spdlog\src\cfg.cpp">
+      <Filter>Source Files\spdlog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\spdlog\src\color_sinks.cpp">
+      <Filter>Source Files\spdlog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\spdlog\src\file_sinks.cpp">
+      <Filter>Source Files\spdlog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\spdlog\src\fmt.cpp">
+      <Filter>Source Files\spdlog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\spdlog\src\spdlog.cpp">
+      <Filter>Source Files\spdlog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\spdlog\src\stdout_sinks.cpp">
+      <Filter>Source Files\spdlog</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
