@@ -9,6 +9,8 @@
 #include <sstream>
 #include <fcntl.h>
 
+#include "Logger.h"
+
 /*****************************************************************************/
 /*                             GLOBAL VARIABLES                              */
 /*****************************************************************************/
@@ -22,20 +24,7 @@ int hFile = 0;
 __declspec(dllexport) void ordinal_1() {}
 
 /* Logging */
-#define Log(...) { \
-    char buffer[100]; \
-	/*memset(buffer, 0, sizeof(buffer));*/							\
-	int len = sprintf_s(buffer, 100, __VA_ARGS__);					\
-	int bytesWritten = 0;											\
-	/** Sanity checks */											\
-	if (bytesWritten == -1) {										\
-		MessageBox(													\
-			HWND_DESKTOP,											\
-			L"Failed to write to the log file.", L"DetoursHooks",	\
-			MB_OK													\
-		);															\
-	}																\
-}
+#define Log(...) // nothing
 
 /*****************************************************************************/
 /*                                   HOOKS                                   */
@@ -72,7 +61,7 @@ BOOL APIENTRY DllMain( HMODULE hModule,
                      )
 {
     LONG error;
-    errno_t err;
+    Logger logger;
     switch (ul_reason_for_call)
     {
     case DLL_PROCESS_ATTACH:
@@ -83,22 +72,8 @@ BOOL APIENTRY DllMain( HMODULE hModule,
         DetourAttach(&True_CreateFile, Hook_CreateFile);
         error = DetourTransactionCommit();
         
-        /** Create a logging file for all the hooked APIs */
-        err = _sopen_s(
-            & hFile,
-            "C:/Users/inegm/Desktop/detours2.log",
-            _O_APPEND | _O_CREAT | _O_RDWR,
-            _SH_DENYNO, _S_IREAD | _S_IWRITE
-        );
-        /** Sanity checks */
-        if (0 != err) {
-        /** Failed to create the file */
-            MessageBoxA(
-                HWND_DESKTOP,
-                "Failed to create the log file.", "Detoury",
-                MB_OK
-            );
-        }
+        logger.init();
+        logger.write();
 
         if (error == NO_ERROR) {
             Log("Detoury successfully hooked the functions.\n");
