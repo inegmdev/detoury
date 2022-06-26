@@ -1,3 +1,6 @@
 [submodule "Detoury/External/Detours"]
 	path = Detoury/External/Detours
 	url = https://github.com/microsoft/Detours.git
+[submodule "Detoury/External/spdlog"]
+	path = Detoury/External/spdlog
+	url = https://github.com/gabime/spdlog.git
