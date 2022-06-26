@@ -89,3 +89,26 @@ ms-detours_build: _header _sanity_checks
 .PHONY:ms-detours
 ms-detours: ms-detours_prebuild ms-detours_build
 #^^^^^^^^^^^^^^^^^^^^^  End of MS Detours Build  ^^^^^^^^^^^^^^^^^^^^^
+
+#vvvvvvvvvvvvvvvvvvvvv Start of Test Commands vvvvvvvvvvvvvvvvvvvvv
+.PHONY: test_with_app
+test_with_app: CUR_DIR=$(shell realpath .)
+test_with_app: DETOURY_OUT_DLL=$(CUR_DIR)/Detoury/x$(detours_target)/Debug/Detoury.dll
+test_with_app: DETOURY_OUT_DLL_WIN_STEP1=$(subst /c/,C:\,$(DETOURY_OUT_DLL))
+test_with_app: DETOURY_OUT_DLL_WIN=$(subst /,\,$(DETOURY_OUT_DLL_WIN_STEP1))
+test_with_app: WITHDLL_EXE=$(CUR_DIR)/Tools/DLL_Injector/withdll_$(detours_target).exe
+test_with_app: WITHDLL_EXE_WIN_STEP1=$(subst /c/,C:\,$(WITHDLL_EXE))
+test_with_app: WITHDLL_EXE_WIN=$(subst /,\,$(WITHDLL_EXE_WIN_STEP1))
+test_with_app: TEST_CMD=$(CUR_DIR)/Build/test_tmp.cmd
+test_with_app: TEST_CMD_WIN_STEP1=$(subst /c/,C:\,$(TEST_CMD))
+test_with_app: TEST_CMD_WIN=$(subst /,\\,$(TEST_CMD_WIN_STEP1))
+test_with_app:
+	# Preparing the test cmd batch
+	echo "@ECHO OFF" > $(TEST_CMD)
+	echo "start cmd /c \" \"$(WITHDLL_EXE_WIN)\" /d:\"$(DETOURY_OUT_DLL_WIN)\" \"$(app)\"\"" >> $(TEST_CMD)
+	cmd /c "$(TEST_CMD_WIN)"
+
+.PHONY: test_notepad
+test_notepad:
+	$(MAKE) test_with_app app=C:\Windows\System32\notepad.exe
+#^^^^^^^^^^^^^^^^^^^^^  End of Test Commands  ^^^^^^^^^^^^^^^^^^^^^
