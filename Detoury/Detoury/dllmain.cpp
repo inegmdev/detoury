@@ -25,33 +25,31 @@ __declspec(dllexport) void ordinal_1() {}
 
 /* Logging */
 #define Log(...) {  \
-    logger.write(); \
-} 
+    logger.write(__VA_ARGS__); \
+}
 
 /*****************************************************************************/
 /*                                   HOOKS                                   */
 /*****************************************************************************/
 
-static HANDLE (* True_CreateFile)(
-    LPCTSTR lpFileName,
-    // pointer to name of the file
-    DWORD dwDesiredAccess,
-    // access (read-write) mode
-    DWORD dwShareMode,
-    // share mode
-    LPSECURITY_ATTRIBUTES lpSecurityAttributes,
-    // pointer to security attributes
-    DWORD dwCreationDistribution,
-    // how to create
-    DWORD dwFlagsAndAttributes,
-    // file attributes
-    HANDLE hTemplateFile
-    // handle to file with attributes to copy
-) = CreateFile;
+static HANDLE (*True_CreateFileA) (
+  LPCSTR                lpFileName,
+  DWORD                 dwDesiredAccess,
+  DWORD                 dwShareMode,
+  LPSECURITY_ATTRIBUTES lpSecurityAttributes,
+  DWORD                 dwCreationDisposition,
+  DWORD                 dwFlagsAndAttributes,
+  HANDLE                hTemplateFile
+) = CreateFileA;
 
-static HANDLE Hook_CreateFile(LPCTSTR lpFileName, DWORD dwDesiredAccess, DWORD dwShareMode, LPSECURITY_ATTRIBUTES lpSecurityAttributes, DWORD dwCreationDistribution, DWORD dwFlagsAndAttributes, HANDLE hTemplateFile) {
-    Log("Created file name\n");
-    return True_CreateFile(lpFileName, dwDesiredAccess, dwShareMode, lpSecurityAttributes, dwCreationDistribution, dwFlagsAndAttributes, hTemplateFile);
+static HANDLE Hook_CreateFileA(
+    LPCSTR lpFileName, DWORD dwDesiredAccess, DWORD dwShareMode,
+    LPSECURITY_ATTRIBUTES lpSecurityAttributes, DWORD dwCreationDisposition,
+    DWORD dwFlagsAndAttributes, HANDLE hTemplateFile
+    ) {
+    Log("'HookedFunction': 'Create_File', 'Parameters': {{ 'lpFileName': '{}', 'dwDesiredAccess': '{}', 'dwShareMode': '{}', 'dwCreationDisposition': '{}', 'dwFlagsAndAttributes': '{}' }}",
+                                                           lpFileName   ,      dwDesiredAccess,         dwShareMode,         dwCreationDisposition,         dwFlagsAndAttributes);
+    return True_CreateFileA(lpFileName, dwDesiredAccess, dwShareMode, lpSecurityAttributes, dwCreationDisposition, dwFlagsAndAttributes, hTemplateFile);
 }
 
 /*****************************************************************************/
@@ -63,25 +61,28 @@ BOOL APIENTRY DllMain( HMODULE hModule,
                      )
 {
     LONG error;
+    std::string s;
     
     switch (ul_reason_for_call)
     {
     case DLL_PROCESS_ATTACH:
         
+        /* Logger Initialization */
         logger.init();
-        logger.write();
+        Log("Started logging");
 
+        /* Microsoft Detours Initialization */
         DetourRestoreAfterWith();
         DetourTransactionBegin();
         DetourUpdateThread(GetCurrentThread());
-        DetourAttach(&True_CreateFile, Hook_CreateFile);
+        DetourAttach(&True_CreateFileA, Hook_CreateFileA);
         error = DetourTransactionCommit();     
 
         if (error == NO_ERROR) {
-            Log("Detoury successfully hooked the functions.\n");
+            Log("Detoury successfully hooked the functions.");
         }
         else {
-            Log("[ERROR] Detoury failed to hook the functions, returns(%ld).\n", error);
+            Log("[ERROR] Detoury failed to hook the functions, returns {}.", error);
         }
 
 

@@ -10,6 +10,9 @@
 #include <sstream> // the outptut saved in stringstream
 #include <ctime>
 
+/* Used for dynamic writing in the log file*/
+#include <spdlog/fmt/fmt.h>
+
 Logger::Logger() {
 	std::tm bt{};
 	// Use static method `now` to return the number of ticks
@@ -38,6 +41,4 @@ void Logger::init() {
 		MessageBoxA(HWND_DESKTOP, ex.what(), "Detoury::Log", MB_OK);
 	}
 }
-void Logger::write() {
-	m_logger->info("Hello world");
-}
+

@@ -1,6 +1,7 @@
 #pragma once
-#include "spdlog/spdlog.h"
 #include <string>
+#include "spdlog/spdlog.h"
+#include "spdlog/fmt/fmt.h"
 
 class Logger {
 private:
@@ -9,5 +10,9 @@ private:
 public:
 	Logger();
 	void init();
-	void write();
+
+	template<typename... Args>
+	void write(fmt::format_string<Args...> fmt, Args &&... args) {
+		m_logger->info(fmt, std::forward<Args>(args)...);
+	}
 };
