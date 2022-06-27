@@ -43,6 +43,39 @@ static HANDLE Hook_CreateFileA(
 }
 
 
+static BOOL (*True_CreateProcessA) (
+    LPCSTR lpApplicationName, 
+    LPSTR lpCommandLine, 
+    LPSECURITY_ATTRIBUTES lpProcessAttributes, 
+    LPSECURITY_ATTRIBUTES lpThreadAttributes, 
+    BOOL bInheritHandles, 
+    DWORD dwCreationFlags, 
+    LPVOID lpEnvironment, 
+    LPCSTR lpCurrentDirectory, 
+    LPSTARTUPINFOA lpStartupInfo, 
+    LPPROCESS_INFORMATION lpProcessInformation
+    ) = CreateProcessA;
+
+static BOOL Hook_CreateProcessA(
+    LPCSTR lpApplicationName, 
+    LPSTR lpCommandLine, 
+    LPSECURITY_ATTRIBUTES lpProcessAttributes, 
+    LPSECURITY_ATTRIBUTES lpThreadAttributes, 
+    BOOL bInheritHandles, 
+    DWORD dwCreationFlags, 
+    LPVOID lpEnvironment, 
+    LPCSTR lpCurrentDirectory, 
+    LPSTARTUPINFOA lpStartupInfo, 
+    LPPROCESS_INFORMATION lpProcessInformation
+) {
+    Log("{{ 'HookedFunction': 'CreateProcessA', 'Parameters': {{ 'lpApplicationName': '{}', 'lpCommandLine': '{}', 'bInheritHandles': '{}', 'dwCreationFlags': '{}', 'lpEnvironment': '{}', 'lpCurrentDirectory': '{}'}} }}",
+         lpApplicationName, lpCommandLine, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory
+    );
+
+    return True_CreateProcessA(lpApplicationName, lpCommandLine, lpProcessAttributes, lpThreadAttributes, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation);
+}
+
+
 static void (*True_Sleep) (
     DWORD dwMilliseconds
     ) = Sleep;
@@ -66,6 +99,9 @@ void DetourAttach_AllHooks() {
     
     DetourAttach(&True_CreateFileA, Hook_CreateFileA);
     Log("'Registered `CreateFileA` '");
+    
+    DetourAttach(&True_CreateProcessA, Hook_CreateProcessA);
+    Log("'Registered `CreateProcessA` '");
     
     DetourAttach(&True_Sleep, Hook_Sleep);
     Log("'Registered `Sleep` '");

@@ -1,1 +1,6 @@
 lpSecurityAttributes
+# CreateProcessA
+lpProcessAttributes
+lpThreadAttributes
+lpStartupInfo
+lpProcessInformation
