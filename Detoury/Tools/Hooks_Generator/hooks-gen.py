@@ -1,7 +1,7 @@
 # Imports
 import re
 import os
-import mmap
+import jinja2 as jinja
 
 #
 # Functions
@@ -38,13 +38,19 @@ def parse_api_hook_file(filepath) :
         
         return ( {"api_name" : api_name, "return_type" : return_type, "params" : api_params_list} )
 
+def render_template(template_dir_path, template_filename, hooks_data):
+    template_loader = jinja.FileSystemLoader(searchpath = template_dir_path)
+    template_env    = jinja.Environment(loader = template_loader)
+    template_file   = template_filename
+    template        = template_env.get_template(template_file)
+    output          = template.render(hooks_data = hooks_data)
+    return (output)
+
 #
 # Main
 #
 def main():
-
     hooks_data = []
-
     # Parsing stage
     # 1. Get script path
     path = get_script_dir()
@@ -55,13 +61,12 @@ def main():
         api_info = parse_api_hook_file(api_file_path)
         # Add all info of API in single dictionary
         hooks_data.append(api_info)
-
     # Generation stage
-    # TBD
-
-    print(hooks_data)
-    
-    
+    template_dir_path = path + "/Template"
+    template_filename = "hooks_template.cpp"
+    hooks_data = { "name": "Islam NEGM" }
+    output = render_template(template_dir_path, template_filename, hooks_data)
+    print(output)
     
 if __name__ == "__main__":
     main()
