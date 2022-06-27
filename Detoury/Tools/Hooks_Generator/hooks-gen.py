@@ -54,7 +54,7 @@ def render_template(template_dir_path, template_filename, hooks_data):
 # Get the exclusion list from the Hooks_Params_Exclusions.txt
 def get_excluded_params(exec_list_path):
     with open(exec_list_path, "r") as f:
-        return f.readlines()
+        return f.read().splitlines()
 
 #
 # Main
