@@ -34,7 +34,7 @@ void Logger::init() {
 		m_logger = spdlog::basic_logger_mt(
 			"basic_logger", path_of_file
 		);
-		m_logger->set_pattern("{ 'timestamp': '%E.%f', 'timestampReadable': '%T.%f' , 'processId': '%P', 'threadId': '%t' , 'event': %v }");
+		m_logger->set_pattern("{ \"timestamp\": \"%E.%f\", \"timestampReadable\": \"%T.%f\" , \"processId\": \"%P\", \"threadId\": \"%t\" , \"event\": %v }");
 		MessageBoxA(HWND_DESKTOP, path_of_file.c_str(), "Detoury - Success", MB_OK);
 	}
 	catch (const spdlog::spdlog_ex &ex) {
