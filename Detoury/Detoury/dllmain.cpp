@@ -11,6 +11,7 @@
 
 #include "Logger.h"
 
+
 /*****************************************************************************/
 /*                             GLOBAL VARIABLES                              */
 /*****************************************************************************/
@@ -23,34 +24,10 @@ Logger logger;
 /* Needed to be used so that the dll library can be used with `withdll` */
 __declspec(dllexport) void ordinal_1() {}
 
-/* Logging */
-#define Log(...) {  \
-    logger.write(__VA_ARGS__); \
-}
-
 /*****************************************************************************/
-/*                                   HOOKS                                   */
+/*                                  HOOKS                                    */
 /*****************************************************************************/
-
-static HANDLE (*True_CreateFileA) (
-  LPCSTR                lpFileName,
-  DWORD                 dwDesiredAccess,
-  DWORD                 dwShareMode,
-  LPSECURITY_ATTRIBUTES lpSecurityAttributes,
-  DWORD                 dwCreationDisposition,
-  DWORD                 dwFlagsAndAttributes,
-  HANDLE                hTemplateFile
-) = CreateFileA;
-
-static HANDLE Hook_CreateFileA(
-    LPCSTR lpFileName, DWORD dwDesiredAccess, DWORD dwShareMode,
-    LPSECURITY_ATTRIBUTES lpSecurityAttributes, DWORD dwCreationDisposition,
-    DWORD dwFlagsAndAttributes, HANDLE hTemplateFile
-    ) {
-    Log("{{ 'HookedFunction': 'Create_File', 'Parameters': {{ 'lpFileName': '{}', 'dwDesiredAccess': '{}', 'dwShareMode': '{}', 'dwCreationDisposition': '{}', 'dwFlagsAndAttributes': '{}' }} }}",
-                                                           lpFileName   ,      dwDesiredAccess,         dwShareMode,         dwCreationDisposition,         dwFlagsAndAttributes);
-    return True_CreateFileA(lpFileName, dwDesiredAccess, dwShareMode, lpSecurityAttributes, dwCreationDisposition, dwFlagsAndAttributes, hTemplateFile);
-}
+#include "Hooks.h"
 
 /*****************************************************************************/
 /*                                   MAIN                                    */

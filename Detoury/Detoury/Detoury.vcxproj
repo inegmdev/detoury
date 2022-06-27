@@ -146,6 +146,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="framework.h" />
+    <ClInclude Include="Hooks.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
