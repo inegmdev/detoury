@@ -64,7 +64,6 @@ def main():
     # Generation stage
     template_dir_path = path + "/Template"
     template_filename = "hooks_template.cpp"
-    hooks_data = { "name": "Islam NEGM" }
     output = render_template(template_dir_path, template_filename, hooks_data)
     print(output)
     

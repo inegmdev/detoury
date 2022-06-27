@@ -38,6 +38,15 @@ Infosec students who are curious how to use MS Detours.
 * **Choose** the right **solution platfrom**, either: "x64, x86"
 * Start building the solution, **Build >> Build Solution**
 
+### Configuring the Hooks
+
+#### Add new API Hook is easy
+
+* Go to `Tools/Hooks_Generator/Hooks` dir.
+* Create a new file with the API name for example `CreateFileA`.
+* Copy the "docs.microsoft.com" MSDN Syntax documentation of the API.
+* Run `make hooks` this will autogenerate the file `Hooks.h` and then you can re-build and start using it.
+
 ## References Used During Development
 
 * [Custom Formatting - Spdlog v1.x - DocsForge](https://spdlog.docsforge.com/v1.x/3.custom-formatting/#pattern-flags)

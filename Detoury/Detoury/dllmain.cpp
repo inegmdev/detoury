@@ -52,7 +52,7 @@ BOOL APIENTRY DllMain( HMODULE hModule,
         DetourRestoreAfterWith();
         DetourTransactionBegin();
         DetourUpdateThread(GetCurrentThread());
-        DetourAttach(&True_CreateFileA, Hook_CreateFileA);
+        DetourAttach_AllHooks();
         error = DetourTransactionCommit();     
 
         if (error == NO_ERROR) {

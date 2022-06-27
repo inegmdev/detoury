@@ -29,6 +29,8 @@ EXTERNAL_DETOURS_DIR_WIN=$(subst /,\\,$(EXTERNAL_DETOURS_DIR_WIN_STEP1))
 # HOOKS GENERATION TOOL
 SCRIPTS_HOOK_GEN_TOOL_DIR=$(shell realpath ./Tools/Hooks_Generator)
 SCRIPTS_HOOK_GEN_TOOL_VENV_INSTALLED_FLAG=$(SCRIPTS_HOOK_GEN_TOOL_DIR)/venv.installed
+# HOOKS GENETATED FILE
+HOOKS_GENERATED_FILE=$(shell realpath ./Detoury/Hooks.h)
 
 #######################################################################
 #                               Targets                               #
@@ -127,10 +129,10 @@ hooks_install:
 	#
 	touch $(SCRIPTS_HOOK_GEN_TOOL_VENV_INSTALLED_FLAG)
 	
-.PHONY: hooks_run
-hooks_run:
+.PHONY: hooks_generate
+hooks_generate:
 	# Running the script from virtual env
-	cd $(SCRIPTS_HOOK_GEN_TOOL_DIR) && ./run.sh
+	cd $(SCRIPTS_HOOK_GEN_TOOL_DIR) && ./run.sh > $(HOOKS_GENERATED_FILE)
 
 .PHONY: hooks_clean
 hooks_clean:
@@ -140,8 +142,7 @@ hooks_clean:
 	rm -f $(SCRIPTS_HOOK_GEN_TOOL_DIR)/venv.installed
 
 .PHONY: hooks
-hooks:
-	python3 $(SCRIPTS_HOOK_GEN_TOOL_DIR)/hooks-gen.py
+hooks: hooks_generate
 #^^^^^^^^^^^^^^^^^^^^^  End of Hooks Generation  ^^^^^^^^^^^^^^^^^^^^^
 
 #vvvvvvvvvvvvvvvvvvvvv Start of Test Commands vvvvvvvvvvvvvvvvvvvvv
