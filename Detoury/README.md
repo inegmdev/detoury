@@ -17,6 +17,9 @@ Infosec students who are curious how to use MS Detours.
 * MS Visual Studio, I used 2022 Community Edition.
 * MSYS2
   - `pacman -S make`
+  - `make init` to run automatic installer for all needed packages (pacman/python virtualenv)
+
+*Note: MSYS2 must be used to envoke all the make commands here, it's the only supported terminal till now*
 
 ### Before Building
 

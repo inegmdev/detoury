@@ -23,10 +23,12 @@ endif
 ## Generated Build Command File for Detours
 GEN_DETOURS_BUILD_CMD_FILE=./Build/build_tmp.cmd
 ## Detours External Dir
-
 EXTERNAL_DETOURS_DIR_BASH=$(shell realpath ./External/Detours)
 EXTERNAL_DETOURS_DIR_WIN_STEP1=$(subst /c/,C:\,$(EXTERNAL_DETOURS_DIR_BASH))
 EXTERNAL_DETOURS_DIR_WIN=$(subst /,\\,$(EXTERNAL_DETOURS_DIR_WIN_STEP1))
+# HOOKS GENERATION TOOL
+SCRIPTS_HOOK_GEN_TOOL_DIR=$(shell realpath ./Tools/Hooks_Generator)
+SCRIPTS_HOOK_GEN_TOOL_VENV_INSTALLED_FLAG=$(SCRIPTS_HOOK_GEN_TOOL_DIR)/venv.installed
 
 #######################################################################
 #                               Targets                               #
@@ -44,6 +46,13 @@ _header:
 	#   arch: $(arch)
 	#
 	#
+
+#vvvvvvvvvvvvvvvvvvvvv Start of Environment Init vvvvvvvvvvvvvvvvvvvvv
+.PHONY: init
+init:
+	# Installing python environment for Hooks Generation Tool
+	$(MAKE) hooks_install
+#^^^^^^^^^^^^^^^^^^^^^  End of Environment Init  ^^^^^^^^^^^^^^^^^^^^^
 
 #vvvvvvvvvvvvvvvvvvvvv Start of Sanity Checks Rules vvvvvvvvvvvvvvvvvvvvv
 # Check the arch option value
@@ -89,6 +98,51 @@ ms-detours_build: _header _sanity_checks
 .PHONY:ms-detours
 ms-detours: ms-detours_prebuild ms-detours_build
 #^^^^^^^^^^^^^^^^^^^^^  End of MS Detours Build  ^^^^^^^^^^^^^^^^^^^^^
+
+#vvvvvvvvvvvvvvvvvvvvv Start of Hooks Generation vvvvvvvvvvvvvvvvvvvvv
+.PHONY: hooks_install
+hooks_install:
+	# Checking if the installation step done before
+	@if [[ -e $(SCRIPTS_HOOK_GEN_TOOL_VENV_INSTALLED_FLAG) ]]; then\
+        echo "  [SKIP] Python venv for Hooks Generator tool already installed.";\
+        exit 0;\
+    fi
+	# Installing the required packcages to be able to use Hooks Generation scripts
+	#
+	# 1. Python3
+	pacman -S --noconfirm --needed python3
+	# [Done] Python3
+	#
+	# 2. Pip3
+	pacman -S --noconfirm --needed python3-pip
+	# [Done] Pip3
+	#
+	# 3. Create the virtual environment
+	cd $(SCRIPTS_HOOK_GEN_TOOL_DIR) && python3 -m venv venv
+	# [Done] Creation of the virtual environment
+	#
+	# 4. Install Python requirements inside the virtual environment
+	cd $(SCRIPTS_HOOK_GEN_TOOL_DIR) && ./venv_install.sh
+	# [Done] Install Python requirements inside the virtual environment
+	#
+	touch $(SCRIPTS_HOOK_GEN_TOOL_VENV_INSTALLED_FLAG)
+	
+.PHONY: hooks_run
+hooks_run:
+	# Running the script from virtual env
+	cd $(SCRIPTS_HOOK_GEN_TOOL_DIR) && ./run.sh
+
+.PHONY: hooks_clean
+hooks_clean:
+	# Removing the python3 venv in Hooks Generator Script
+	rm -rf $(SCRIPTS_HOOK_GEN_TOOL_DIR)/venv
+	# Removing the flag of installed environment
+	rm -f $(SCRIPTS_HOOK_GEN_TOOL_DIR)/venv.installed
+
+.PHONY: hooks
+hooks:
+	python3 $(SCRIPTS_HOOK_GEN_TOOL_DIR)/hooks-gen.py
+#^^^^^^^^^^^^^^^^^^^^^  End of Hooks Generation  ^^^^^^^^^^^^^^^^^^^^^
 
 #vvvvvvvvvvvvvvvvvvvvv Start of Test Commands vvvvvvvvvvvvvvvvvvvvv
 .PHONY: test_with_app
