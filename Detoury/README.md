@@ -43,9 +43,14 @@ Infosec students who are curious how to use MS Detours.
 #### Add new API Hook is easy
 
 * Go to `Tools/Hooks_Generator/Hooks` dir.
-* Create a new file with the API name for example `CreateFileA`.
+* Create a new file with the API name for example `CreateFileA.txt`.
 * Copy the "docs.microsoft.com" MSDN Syntax documentation of the API.
 * Run `make hooks` this will autogenerate the file `Hooks.h` and then you can re-build and start using it.
+
+#### Exclude API parameters from logging
+
+* Add your parameter name to the exclusion list to filter out the parameters that you don't want to log `Tools/Hooks_Generator/Exclusions/Hooks_Params_Exclusion.txt`
+* This might be helpful if there is a building issue and you want to discard the parameter causing the issue.
 
 ## References Used During Development
 

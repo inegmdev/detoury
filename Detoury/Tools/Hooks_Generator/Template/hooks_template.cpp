@@ -27,8 +27,8 @@ static {{ api.return_type }} Hook_{{ api.api_name }}(
     {{ param.param_type }} {{ param.param_name }}{% if not loop.last %}, {% endif %}
     {%- endfor %}
 ) {
-    Log("{{ '{{' }} 'HookedFunction': '{{ api.api_name }}', 'Parameters': {{ '{{' }}{% for param in api.params %} '{{ param.param_name }}': '{}'{% if not loop.last %},{% endif %}{% endfor %}}} }}",
-        {% for param in api.params %} {{ param.param_name }}{% if not loop.last %},{% endif %}{% endfor %}
+    Log("{{ '{{' }} 'HookedFunction': '{{ api.api_name }}', 'Parameters': {{ '{{' }}{% for param in api.log_params %} '{{ param.param_name }}': '{}'{% if not loop.last %},{% endif %}{% endfor %}}} }}",
+        {% for param in api.log_params %} {{ param.param_name }}{% if not loop.last %},{% endif %}{% endfor %}
     );
 
     return True_{{ api.api_name }}({% for param in api.params %}{{ param.param_name }}{% if not loop.last %}, {% endif %}{% endfor %});
