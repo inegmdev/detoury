@@ -35,6 +35,10 @@ Infosec students who are curious how to use MS Detours.
 * **Choose** the right **solution platfrom**, either: "x64, x86"
 * Start building the solution, **Build >> Build Solution**
 
+## References Used During Development
+
+* [Custom Formatting - Spdlog v1.x - DocsForge](https://spdlog.docsforge.com/v1.x/3.custom-formatting/#pattern-flags)
+
 ## License 
 
 Check `../LICENSE`

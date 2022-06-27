@@ -47,7 +47,7 @@ static HANDLE Hook_CreateFileA(
     LPSECURITY_ATTRIBUTES lpSecurityAttributes, DWORD dwCreationDisposition,
     DWORD dwFlagsAndAttributes, HANDLE hTemplateFile
     ) {
-    Log("'HookedFunction': 'Create_File', 'Parameters': {{ 'lpFileName': '{}', 'dwDesiredAccess': '{}', 'dwShareMode': '{}', 'dwCreationDisposition': '{}', 'dwFlagsAndAttributes': '{}' }}",
+    Log("{{ 'HookedFunction': 'Create_File', 'Parameters': {{ 'lpFileName': '{}', 'dwDesiredAccess': '{}', 'dwShareMode': '{}', 'dwCreationDisposition': '{}', 'dwFlagsAndAttributes': '{}' }} }}",
                                                            lpFileName   ,      dwDesiredAccess,         dwShareMode,         dwCreationDisposition,         dwFlagsAndAttributes);
     return True_CreateFileA(lpFileName, dwDesiredAccess, dwShareMode, lpSecurityAttributes, dwCreationDisposition, dwFlagsAndAttributes, hTemplateFile);
 }
@@ -69,7 +69,7 @@ BOOL APIENTRY DllMain( HMODULE hModule,
         
         /* Logger Initialization */
         logger.init();
-        Log("Started logging");
+        Log("'Started logging'");
 
         /* Microsoft Detours Initialization */
         DetourRestoreAfterWith();
@@ -79,10 +79,10 @@ BOOL APIENTRY DllMain( HMODULE hModule,
         error = DetourTransactionCommit();     
 
         if (error == NO_ERROR) {
-            Log("Detoury successfully hooked the functions.");
+            Log("'Detoury successfully hooked the functions.'");
         }
         else {
-            Log("[ERROR] Detoury failed to hook the functions, returns {}.", error);
+            Log("'[ERROR] Detoury failed to hook the functions, returns {}.'", error);
         }
 
 
