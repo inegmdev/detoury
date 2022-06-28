@@ -17,8 +17,10 @@ MS_VC_TOOLS_DIR=$(MS_VC_DIR)\Common7\Tools
 MS_VC_BUILD_CMD_DIR=$(MS_VC_DIR)\VC\Auxiliary\Build
 ## Detours Architecture Target
 detours_target?=$(arch)
+detoury_out_dir?=x$(arch)/
 ifeq ($(arch),32)
 	detours_target=86
+	detoury_out_dir=
 endif
 ## Generated Build Command File for Detours
 GEN_DETOURS_BUILD_CMD_FILE=./Build/build_tmp.cmd
@@ -151,7 +153,7 @@ test_with_app: CUR_DIR=$(shell realpath .)
 test_with_app: DETOURY_OUT_DLL=$(CUR_DIR)/Detoury/x$(detours_target)/Debug/Detoury.dll
 test_with_app: DETOURY_OUT_DLL_WIN_STEP1=$(subst /c/,C:\,$(DETOURY_OUT_DLL))
 test_with_app: DETOURY_OUT_DLL_WIN=$(subst /,\,$(DETOURY_OUT_DLL_WIN_STEP1))
-test_with_app: WITHDLL_EXE=$(CUR_DIR)/Tools/DLL_Injector/withdll_$(detours_target).exe
+test_with_app: WITHDLL_EXE=$(CUR_DIR)/Tools/DLL_Injector/withdll_x$(detours_target).exe
 test_with_app: WITHDLL_EXE_WIN_STEP1=$(subst /c/,C:\,$(WITHDLL_EXE))
 test_with_app: WITHDLL_EXE_WIN=$(subst /,\,$(WITHDLL_EXE_WIN_STEP1))
 test_with_app: TEST_CMD=$(CUR_DIR)/Build/test_tmp.cmd
@@ -167,3 +169,24 @@ test_with_app:
 test_notepad:
 	$(MAKE) test_with_app app=C:\Windows\System32\notepad.exe
 #^^^^^^^^^^^^^^^^^^^^^  End of Test Commands  ^^^^^^^^^^^^^^^^^^^^^
+
+#vvvvvvvvvvvvvvvvvvvvv Start of Install Commands vvvvvvvvvvvvvvvvvvvvv
+.PHONY: detoury_install
+detoury_install: DETOURY_DLL_OUT=$(shell realpath ./Detoury/$(detoury_out_dir)Debug/Detoury.dll)
+detoury_install:
+	install -C $(DETOURY_DLL_OUT) ./Release/Detoury_x$(detours_target).dll
+
+.PHONY: withdll_install
+withdll_install: WITH_DLL=$(shell realpath ./Tools/DLL_Injector/withdll_x$(detours_target).exe)
+withdll_install:
+	install -C $(WITH_DLL) ./Release/withdll_x$(detours_target).exe
+
+.PHONY: install
+install: detoury_install withdll_install 
+
+.PHONY: delivery
+delivery:
+	$(MAKE) install arch=64
+	$(MAKE) install arch=32
+
+#^^^^^^^^^^^^^^^^^^^^^  End of Install Commands  ^^^^^^^^^^^^^^^^^^^^^
