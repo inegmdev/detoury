@@ -6,3 +6,6 @@ lpStartupInfo
 lpProcessInformation
 # ShellExecuteA
 hwnd
+# RegOpenKeyA
+hKey
+phkResult

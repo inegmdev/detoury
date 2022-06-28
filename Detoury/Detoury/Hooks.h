@@ -17,23 +17,23 @@
 
 
 static HANDLE (*True_CreateFileA) (
-    LPCSTR lpFileName, 
-    DWORD dwDesiredAccess, 
-    DWORD dwShareMode, 
-    LPSECURITY_ATTRIBUTES lpSecurityAttributes, 
-    DWORD dwCreationDisposition, 
-    DWORD dwFlagsAndAttributes, 
-    HANDLE hTemplateFile
+    LPCSTR                 lpFileName, 
+    DWORD                  dwDesiredAccess, 
+    DWORD                  dwShareMode, 
+    LPSECURITY_ATTRIBUTES  lpSecurityAttributes, 
+    DWORD                  dwCreationDisposition, 
+    DWORD                  dwFlagsAndAttributes, 
+    HANDLE                 hTemplateFile
     ) = CreateFileA;
 
 static HANDLE Hook_CreateFileA(
-    LPCSTR lpFileName, 
-    DWORD dwDesiredAccess, 
-    DWORD dwShareMode, 
-    LPSECURITY_ATTRIBUTES lpSecurityAttributes, 
-    DWORD dwCreationDisposition, 
-    DWORD dwFlagsAndAttributes, 
-    HANDLE hTemplateFile
+    LPCSTR                 lpFileName, 
+    DWORD                  dwDesiredAccess, 
+    DWORD                  dwShareMode, 
+    LPSECURITY_ATTRIBUTES  lpSecurityAttributes, 
+    DWORD                  dwCreationDisposition, 
+    DWORD                  dwFlagsAndAttributes, 
+    HANDLE                 hTemplateFile
 ) {
     Log("{{ 'HookedFunction': 'CreateFileA', 'Parameters': {{ 'lpFileName': '{}', 'dwDesiredAccess': '{}', 'dwShareMode': '{}', 'dwCreationDisposition': '{}', 'dwFlagsAndAttributes': '{}', 'hTemplateFile': '{}'}} }}"
         , lpFileName, dwDesiredAccess, dwShareMode, dwCreationDisposition, dwFlagsAndAttributes, hTemplateFile
@@ -44,29 +44,29 @@ static HANDLE Hook_CreateFileA(
 
 
 static BOOL (*True_CreateProcessA) (
-    LPCSTR lpApplicationName, 
-    LPSTR lpCommandLine, 
-    LPSECURITY_ATTRIBUTES lpProcessAttributes, 
-    LPSECURITY_ATTRIBUTES lpThreadAttributes, 
-    BOOL bInheritHandles, 
-    DWORD dwCreationFlags, 
-    LPVOID lpEnvironment, 
-    LPCSTR lpCurrentDirectory, 
-    LPSTARTUPINFOA lpStartupInfo, 
-    LPPROCESS_INFORMATION lpProcessInformation
+    LPCSTR                 lpApplicationName, 
+    LPSTR                  lpCommandLine, 
+    LPSECURITY_ATTRIBUTES  lpProcessAttributes, 
+    LPSECURITY_ATTRIBUTES  lpThreadAttributes, 
+    BOOL                   bInheritHandles, 
+    DWORD                  dwCreationFlags, 
+    LPVOID                 lpEnvironment, 
+    LPCSTR                 lpCurrentDirectory, 
+    LPSTARTUPINFOA         lpStartupInfo, 
+    LPPROCESS_INFORMATION  lpProcessInformation
     ) = CreateProcessA;
 
 static BOOL Hook_CreateProcessA(
-    LPCSTR lpApplicationName, 
-    LPSTR lpCommandLine, 
-    LPSECURITY_ATTRIBUTES lpProcessAttributes, 
-    LPSECURITY_ATTRIBUTES lpThreadAttributes, 
-    BOOL bInheritHandles, 
-    DWORD dwCreationFlags, 
-    LPVOID lpEnvironment, 
-    LPCSTR lpCurrentDirectory, 
-    LPSTARTUPINFOA lpStartupInfo, 
-    LPPROCESS_INFORMATION lpProcessInformation
+    LPCSTR                 lpApplicationName, 
+    LPSTR                  lpCommandLine, 
+    LPSECURITY_ATTRIBUTES  lpProcessAttributes, 
+    LPSECURITY_ATTRIBUTES  lpThreadAttributes, 
+    BOOL                   bInheritHandles, 
+    DWORD                  dwCreationFlags, 
+    LPVOID                 lpEnvironment, 
+    LPCSTR                 lpCurrentDirectory, 
+    LPSTARTUPINFOA         lpStartupInfo, 
+    LPPROCESS_INFORMATION  lpProcessInformation
 ) {
     Log("{{ 'HookedFunction': 'CreateProcessA', 'Parameters': {{ 'lpApplicationName': '{}', 'lpCommandLine': '{}', 'bInheritHandles': '{}', 'dwCreationFlags': '{}', 'lpEnvironment': '{}', 'lpCurrentDirectory': '{}'}} }}"
         , lpApplicationName, lpCommandLine, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory
@@ -77,11 +77,11 @@ static BOOL Hook_CreateProcessA(
 
 
 static void (*True_ExitProcess) (
-    UINT uExitCode
+    UINT  uExitCode
     ) = ExitProcess;
 
 static void Hook_ExitProcess(
-    UINT uExitCode
+    UINT  uExitCode
 ) {
     Log("{{ 'HookedFunction': 'ExitProcess', 'Parameters': {{ 'uExitCode': '{}'}} }}"
         , uExitCode
@@ -105,11 +105,11 @@ static LPSTR Hook_GetCommandLineA(
 
 
 static void (*True_GetStartupInfoW) (
-    LPSTARTUPINFOW lpStartupInfo
+    LPSTARTUPINFOW  lpStartupInfo
     ) = GetStartupInfoW;
 
 static void Hook_GetStartupInfoW(
-    LPSTARTUPINFOW lpStartupInfo
+    LPSTARTUPINFOW  lpStartupInfo
 ) {
     Log("{{ 'HookedFunction': 'GetStartupInfoW', 'Parameters': {{}} }}"
         
@@ -120,15 +120,15 @@ static void Hook_GetStartupInfoW(
 
 
 static HANDLE (*True_OpenProcess) (
-    DWORD dwDesiredAccess, 
-    BOOL bInheritHandle, 
-    DWORD dwProcessId
+    DWORD  dwDesiredAccess, 
+    BOOL   bInheritHandle, 
+    DWORD  dwProcessId
     ) = OpenProcess;
 
 static HANDLE Hook_OpenProcess(
-    DWORD dwDesiredAccess, 
-    BOOL bInheritHandle, 
-    DWORD dwProcessId
+    DWORD  dwDesiredAccess, 
+    BOOL   bInheritHandle, 
+    DWORD  dwProcessId
 ) {
     Log("{{ 'HookedFunction': 'OpenProcess', 'Parameters': {{ 'dwDesiredAccess': '{}', 'bInheritHandle': '{}', 'dwProcessId': '{}'}} }}"
         , dwDesiredAccess, bInheritHandle, dwProcessId
@@ -138,22 +138,132 @@ static HANDLE Hook_OpenProcess(
 }
 
 
+static LSTATUS (*True_RegCloseKey) (
+    HKEY  hKey
+    ) = RegCloseKey;
+
+static LSTATUS Hook_RegCloseKey(
+    HKEY  hKey
+) {
+    Log("{{ 'HookedFunction': 'RegCloseKey', 'Parameters': {{}} }}"
+        
+    );
+
+    return True_RegCloseKey(hKey);
+}
+
+
+static LSTATUS (*True_RegDeleteKeyA) (
+    HKEY    hKey, 
+    LPCSTR  lpSubKey
+    ) = RegDeleteKeyA;
+
+static LSTATUS Hook_RegDeleteKeyA(
+    HKEY    hKey, 
+    LPCSTR  lpSubKey
+) {
+    Log("{{ 'HookedFunction': 'RegDeleteKeyA', 'Parameters': {{ 'lpSubKey': '{}'}} }}"
+        , lpSubKey
+    );
+
+    return True_RegDeleteKeyA(hKey, lpSubKey);
+}
+
+
+static LSTATUS (*True_RegDeleteValueA) (
+    HKEY    hKey, 
+    LPCSTR  lpValueName
+    ) = RegDeleteValueA;
+
+static LSTATUS Hook_RegDeleteValueA(
+    HKEY    hKey, 
+    LPCSTR  lpValueName
+) {
+    Log("{{ 'HookedFunction': 'RegDeleteValueA', 'Parameters': {{ 'lpValueName': '{}'}} }}"
+        , lpValueName
+    );
+
+    return True_RegDeleteValueA(hKey, lpValueName);
+}
+
+
+static LSTATUS (*True_RegOpenKeyA) (
+    HKEY    hKey, 
+    LPCSTR  lpSubKey, 
+    PHKEY   phkResult
+    ) = RegOpenKeyA;
+
+static LSTATUS Hook_RegOpenKeyA(
+    HKEY    hKey, 
+    LPCSTR  lpSubKey, 
+    PHKEY   phkResult
+) {
+    Log("{{ 'HookedFunction': 'RegOpenKeyA', 'Parameters': {{ 'lpSubKey': '{}'}} }}"
+        , lpSubKey
+    );
+
+    return True_RegOpenKeyA(hKey, lpSubKey, phkResult);
+}
+
+
+static LSTATUS (*True_RegSaveKeyA) (
+    HKEY                         hKey, 
+    LPCSTR                       lpFile, 
+    LPSECURITY_ATTRIBUTES  lpSecurityAttributes
+    ) = RegSaveKeyA;
+
+static LSTATUS Hook_RegSaveKeyA(
+    HKEY                         hKey, 
+    LPCSTR                       lpFile, 
+    LPSECURITY_ATTRIBUTES  lpSecurityAttributes
+) {
+    Log("{{ 'HookedFunction': 'RegSaveKeyA', 'Parameters': {{ 'lpFile': '{}'}} }}"
+        , lpFile
+    );
+
+    return True_RegSaveKeyA(hKey, lpFile, lpSecurityAttributes);
+}
+
+
+static LSTATUS (*True_RegSetValueA) (
+    HKEY    hKey, 
+    LPCSTR  lpSubKey, 
+    DWORD   dwType, 
+    LPCSTR  lpData, 
+    DWORD   cbData
+    ) = RegSetValueA;
+
+static LSTATUS Hook_RegSetValueA(
+    HKEY    hKey, 
+    LPCSTR  lpSubKey, 
+    DWORD   dwType, 
+    LPCSTR  lpData, 
+    DWORD   cbData
+) {
+    Log("{{ 'HookedFunction': 'RegSetValueA', 'Parameters': {{ 'lpSubKey': '{}', 'dwType': '{}', 'lpData': '{}', 'cbData': '{}'}} }}"
+        , lpSubKey, dwType, lpData, cbData
+    );
+
+    return True_RegSetValueA(hKey, lpSubKey, dwType, lpData, cbData);
+}
+
+
 static HINSTANCE (*True_ShellExecuteA) (
-    HWND hwnd, 
-    LPCSTR lpOperation, 
-    LPCSTR lpFile, 
-    LPCSTR lpParameters, 
-    LPCSTR lpDirectory, 
-    INT nShowCmd
+    HWND    hwnd, 
+    LPCSTR  lpOperation, 
+    LPCSTR  lpFile, 
+    LPCSTR  lpParameters, 
+    LPCSTR  lpDirectory, 
+    INT     nShowCmd
     ) = ShellExecuteA;
 
 static HINSTANCE Hook_ShellExecuteA(
-    HWND hwnd, 
-    LPCSTR lpOperation, 
-    LPCSTR lpFile, 
-    LPCSTR lpParameters, 
-    LPCSTR lpDirectory, 
-    INT nShowCmd
+    HWND    hwnd, 
+    LPCSTR  lpOperation, 
+    LPCSTR  lpFile, 
+    LPCSTR  lpParameters, 
+    LPCSTR  lpDirectory, 
+    INT     nShowCmd
 ) {
     Log("{{ 'HookedFunction': 'ShellExecuteA', 'Parameters': {{ 'lpOperation': '{}', 'lpFile': '{}', 'lpParameters': '{}', 'lpDirectory': '{}', 'nShowCmd': '{}'}} }}"
         , lpOperation, lpFile, lpParameters, lpDirectory, nShowCmd
@@ -164,11 +274,11 @@ static HINSTANCE Hook_ShellExecuteA(
 
 
 static void (*True_Sleep) (
-    DWORD dwMilliseconds
+    DWORD  dwMilliseconds
     ) = Sleep;
 
 static void Hook_Sleep(
-    DWORD dwMilliseconds
+    DWORD  dwMilliseconds
 ) {
     Log("{{ 'HookedFunction': 'Sleep', 'Parameters': {{ 'dwMilliseconds': '{}'}} }}"
         , dwMilliseconds
@@ -201,6 +311,24 @@ void DetourAttach_AllHooks() {
     
     DetourAttach(&True_OpenProcess, Hook_OpenProcess);
     Log("'Registered `OpenProcess` '");
+    
+    DetourAttach(&True_RegCloseKey, Hook_RegCloseKey);
+    Log("'Registered `RegCloseKey` '");
+    
+    DetourAttach(&True_RegDeleteKeyA, Hook_RegDeleteKeyA);
+    Log("'Registered `RegDeleteKeyA` '");
+    
+    DetourAttach(&True_RegDeleteValueA, Hook_RegDeleteValueA);
+    Log("'Registered `RegDeleteValueA` '");
+    
+    DetourAttach(&True_RegOpenKeyA, Hook_RegOpenKeyA);
+    Log("'Registered `RegOpenKeyA` '");
+    
+    DetourAttach(&True_RegSaveKeyA, Hook_RegSaveKeyA);
+    Log("'Registered `RegSaveKeyA` '");
+    
+    DetourAttach(&True_RegSetValueA, Hook_RegSetValueA);
+    Log("'Registered `RegSetValueA` '");
     
     DetourAttach(&True_ShellExecuteA, Hook_ShellExecuteA);
     Log("'Registered `ShellExecuteA` '");
