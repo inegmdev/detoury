@@ -27,7 +27,7 @@ static {{ api.return_type }} WINAPI Hook_{{ api.api_name }}(
     {{ param.param_type }} {{ param.param_name }}{% if not loop.last %}, {% endif %}
     {%- endfor %}
 ) {
-    Log("{{ '{{' }} 'HookedFunction': '{{ api.api_name }}', 'Parameters': {{ '{{' }}{% for param in api.log_params %} '{{ param.param_name }}': '{}'{% if not loop.last %},{% endif %}{% endfor %}}} }}"
+    Log("{{ '{{' }} \"HookedFunction\": \"{{ api.api_name }}\", \"Parameters\": {{ '{{' }}{% for param in api.log_params %} \"{{ param.param_name }}\": \"{}\"{% if not loop.last %},{% endif %}{% endfor %}}} }}"
         {% for param in api.log_params %}, {{ param.param_name }}{% endfor %}
     );
 
@@ -42,6 +42,6 @@ static {{ api.return_type }} WINAPI Hook_{{ api.api_name }}(
 void DetourAttach_AllHooks() {
     {% for api in hooks_data %}
     DetourAttach(&True_{{api.api_name}}, Hook_{{api.api_name}});
-    Log("'Registered `{{api.api_name}}` '");
+    Log("\"Registered `{{api.api_name}}` \"");
     {% endfor %}
 }

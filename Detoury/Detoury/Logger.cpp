@@ -35,7 +35,8 @@ void Logger::init() {
 			"basic_logger", path_of_file
 		);
 		m_logger->set_pattern("{ \"timestamp\": \"%E.%f\", \"timestampReadable\": \"%T.%f\" , \"processId\": \"%P\", \"threadId\": \"%t\" , \"event\": %v }");
-		MessageBoxA(HWND_DESKTOP, path_of_file.c_str(), "Detoury - Success", MB_OK);
+		std::string message = "Logging will be inside file " + path_of_file;
+		MessageBoxA(HWND_DESKTOP, message.c_str(), "Detoury - Success", MB_OK);
 	}
 	catch (const spdlog::spdlog_ex &ex) {
 		MessageBoxA(HWND_DESKTOP, "Failed to init the log file", "Detoury::Log", MB_OK);
