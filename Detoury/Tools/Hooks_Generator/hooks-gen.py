@@ -29,7 +29,7 @@ def parse_api_hook_file(filepath, execlusion_list) :
         # Get the parameters
         api_params_list = []
         for line in lines[1:]:
-            match__param_token_and_param_type = re.match(r"^[^\]]+\]\s+(\w+)\s+(\w+),?", line, flags=re.MULTILINE)
+            match__param_token_and_param_type = re.match(r"^[^\]]+\]\s+(\w+\s+)+(\w+),?", line, flags=re.MULTILINE)
             # Skip the last line to avoid accessing None object
             if (match__param_token_and_param_type == None):
                 continue
