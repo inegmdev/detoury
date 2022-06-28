@@ -62,6 +62,25 @@ static HANDLE Hook_CreateFileA(
 }
 
 
+static HANDLE (*True_CreateMutexA) (
+    LPSECURITY_ATTRIBUTES  lpMutexAttributes, 
+    BOOL                   bInitialOwner, 
+    LPCSTR                 lpName
+    ) = CreateMutexA;
+
+static HANDLE Hook_CreateMutexA(
+    LPSECURITY_ATTRIBUTES  lpMutexAttributes, 
+    BOOL                   bInitialOwner, 
+    LPCSTR                 lpName
+) {
+    Log("{{ 'HookedFunction': 'CreateMutexA', 'Parameters': {{ 'bInitialOwner': '{}', 'lpName': '{}'}} }}"
+        , bInitialOwner, lpName
+    );
+
+    return True_CreateMutexA(lpMutexAttributes, bInitialOwner, lpName);
+}
+
+
 static BOOL (*True_CreateProcessA) (
     LPCSTR                 lpApplicationName, 
     LPSTR                  lpCommandLine, 
@@ -184,6 +203,25 @@ static void Hook_GetStartupInfoW(
     );
 
     return True_GetStartupInfoW(lpStartupInfo);
+}
+
+
+static HANDLE (*True_OpenMutexA) (
+    DWORD  dwDesiredAccess, 
+    BOOL  bInheritHandle, 
+    LPCSTR  lpName
+    ) = OpenMutexA;
+
+static HANDLE Hook_OpenMutexA(
+    DWORD  dwDesiredAccess, 
+    BOOL  bInheritHandle, 
+    LPCSTR  lpName
+) {
+    Log("{{ 'HookedFunction': 'OpenMutexA', 'Parameters': {{ 'dwDesiredAccess': '{}', 'bInheritHandle': '{}', 'lpName': '{}'}} }}"
+        , dwDesiredAccess, bInheritHandle, lpName
+    );
+
+    return True_OpenMutexA(dwDesiredAccess, bInheritHandle, lpName);
 }
 
 
@@ -316,6 +354,21 @@ static LSTATUS Hook_RegSetValueA(
 }
 
 
+static BOOL (*True_ReleaseMutex) (
+    HANDLE  hMutex
+    ) = ReleaseMutex;
+
+static BOOL Hook_ReleaseMutex(
+    HANDLE  hMutex
+) {
+    Log("{{ 'HookedFunction': 'ReleaseMutex', 'Parameters': {{ 'hMutex': '{}'}} }}"
+        , hMutex
+    );
+
+    return True_ReleaseMutex(hMutex);
+}
+
+
 static HINSTANCE (*True_ShellExecuteA) (
     HWND    hwnd, 
     LPCSTR  lpOperation, 
@@ -368,6 +421,9 @@ void DetourAttach_AllHooks() {
     DetourAttach(&True_CreateFileA, Hook_CreateFileA);
     Log("'Registered `CreateFileA` '");
     
+    DetourAttach(&True_CreateMutexA, Hook_CreateMutexA);
+    Log("'Registered `CreateMutexA` '");
+    
     DetourAttach(&True_CreateProcessA, Hook_CreateProcessA);
     Log("'Registered `CreateProcessA` '");
     
@@ -389,6 +445,9 @@ void DetourAttach_AllHooks() {
     DetourAttach(&True_GetStartupInfoW, Hook_GetStartupInfoW);
     Log("'Registered `GetStartupInfoW` '");
     
+    DetourAttach(&True_OpenMutexA, Hook_OpenMutexA);
+    Log("'Registered `OpenMutexA` '");
+    
     DetourAttach(&True_OpenProcess, Hook_OpenProcess);
     Log("'Registered `OpenProcess` '");
     
@@ -409,6 +468,9 @@ void DetourAttach_AllHooks() {
     
     DetourAttach(&True_RegSetValueA, Hook_RegSetValueA);
     Log("'Registered `RegSetValueA` '");
+    
+    DetourAttach(&True_ReleaseMutex, Hook_ReleaseMutex);
+    Log("'Registered `ReleaseMutex` '");
     
     DetourAttach(&True_ShellExecuteA, Hook_ShellExecuteA);
     Log("'Registered `ShellExecuteA` '");

@@ -11,3 +11,5 @@ hKey
 phkResult
 # FindFirstFileA
 lpFindFileData
+# CreateMutexA
+lpMutexAttributes
