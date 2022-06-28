@@ -16,13 +16,13 @@
 
 {% for api in hooks_data %}
 
-static {{ api.return_type }} (*True_{{ api.api_name }}) (
+static {{ api.return_type }} (WINAPI *True_{{ api.api_name }}) (
     {%- for param in api.params %}
     {{ param.param_type }} {{ param.param_name }}{% if not loop.last %}, {% endif %}
     {%- endfor %}
     ) = {{ api.api_name }};
 
-static {{ api.return_type }} Hook_{{ api.api_name }}(
+static {{ api.return_type }} WINAPI Hook_{{ api.api_name }}(
     {%- for param in api.params %}
     {{ param.param_type }} {{ param.param_name }}{% if not loop.last %}, {% endif %}
     {%- endfor %}

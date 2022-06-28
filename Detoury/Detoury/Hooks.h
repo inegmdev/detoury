@@ -16,13 +16,13 @@
 
 
 
-static BOOL (*True_CopyFileA) (
+static BOOL (WINAPI *True_CopyFileA) (
     LPCSTR  lpExistingFileName, 
     LPCSTR  lpNewFileName, 
     BOOL    bFailIfExists
     ) = CopyFileA;
 
-static BOOL Hook_CopyFileA(
+static BOOL WINAPI Hook_CopyFileA(
     LPCSTR  lpExistingFileName, 
     LPCSTR  lpNewFileName, 
     BOOL    bFailIfExists
@@ -35,7 +35,7 @@ static BOOL Hook_CopyFileA(
 }
 
 
-static HANDLE (*True_CreateFileA) (
+static HANDLE (WINAPI *True_CreateFileA) (
     LPCSTR                 lpFileName, 
     DWORD                  dwDesiredAccess, 
     DWORD                  dwShareMode, 
@@ -45,7 +45,7 @@ static HANDLE (*True_CreateFileA) (
     HANDLE                 hTemplateFile
     ) = CreateFileA;
 
-static HANDLE Hook_CreateFileA(
+static HANDLE WINAPI Hook_CreateFileA(
     LPCSTR                 lpFileName, 
     DWORD                  dwDesiredAccess, 
     DWORD                  dwShareMode, 
@@ -62,13 +62,13 @@ static HANDLE Hook_CreateFileA(
 }
 
 
-static HANDLE (*True_CreateMutexA) (
+static HANDLE (WINAPI *True_CreateMutexA) (
     LPSECURITY_ATTRIBUTES  lpMutexAttributes, 
     BOOL                   bInitialOwner, 
     LPCSTR                 lpName
     ) = CreateMutexA;
 
-static HANDLE Hook_CreateMutexA(
+static HANDLE WINAPI Hook_CreateMutexA(
     LPSECURITY_ATTRIBUTES  lpMutexAttributes, 
     BOOL                   bInitialOwner, 
     LPCSTR                 lpName
@@ -81,7 +81,7 @@ static HANDLE Hook_CreateMutexA(
 }
 
 
-static BOOL (*True_CreateProcessA) (
+static BOOL (WINAPI *True_CreateProcessA) (
     LPCSTR                 lpApplicationName, 
     LPSTR                  lpCommandLine, 
     LPSECURITY_ATTRIBUTES  lpProcessAttributes, 
@@ -94,7 +94,7 @@ static BOOL (*True_CreateProcessA) (
     LPPROCESS_INFORMATION  lpProcessInformation
     ) = CreateProcessA;
 
-static BOOL Hook_CreateProcessA(
+static BOOL WINAPI Hook_CreateProcessA(
     LPCSTR                 lpApplicationName, 
     LPSTR                  lpCommandLine, 
     LPSECURITY_ATTRIBUTES  lpProcessAttributes, 
@@ -114,11 +114,11 @@ static BOOL Hook_CreateProcessA(
 }
 
 
-static BOOL (*True_DeleteFileA) (
+static BOOL (WINAPI *True_DeleteFileA) (
     LPCSTR  lpFileName
     ) = DeleteFileA;
 
-static BOOL Hook_DeleteFileA(
+static BOOL WINAPI Hook_DeleteFileA(
     LPCSTR  lpFileName
 ) {
     Log("{{ 'HookedFunction': 'DeleteFileA', 'Parameters': {{ 'lpFileName': '{}'}} }}"
@@ -129,11 +129,11 @@ static BOOL Hook_DeleteFileA(
 }
 
 
-static void (*True_ExitProcess) (
+static void (WINAPI *True_ExitProcess) (
     UINT  uExitCode
     ) = ExitProcess;
 
-static void Hook_ExitProcess(
+static void WINAPI Hook_ExitProcess(
     UINT  uExitCode
 ) {
     Log("{{ 'HookedFunction': 'ExitProcess', 'Parameters': {{ 'uExitCode': '{}'}} }}"
@@ -144,12 +144,12 @@ static void Hook_ExitProcess(
 }
 
 
-static HANDLE (*True_FindFirstFileA) (
+static HANDLE (WINAPI *True_FindFirstFileA) (
     LPCSTR              lpFileName, 
     LPWIN32_FIND_DATAA  lpFindFileData
     ) = FindFirstFileA;
 
-static HANDLE Hook_FindFirstFileA(
+static HANDLE WINAPI Hook_FindFirstFileA(
     LPCSTR              lpFileName, 
     LPWIN32_FIND_DATAA  lpFindFileData
 ) {
@@ -161,12 +161,12 @@ static HANDLE Hook_FindFirstFileA(
 }
 
 
-static BOOL (*True_FindNextFileA) (
+static BOOL (WINAPI *True_FindNextFileA) (
     HANDLE              hFindFile, 
     LPWIN32_FIND_DATAA  lpFindFileData
     ) = FindNextFileA;
 
-static BOOL Hook_FindNextFileA(
+static BOOL WINAPI Hook_FindNextFileA(
     HANDLE              hFindFile, 
     LPWIN32_FIND_DATAA  lpFindFileData
 ) {
@@ -178,10 +178,10 @@ static BOOL Hook_FindNextFileA(
 }
 
 
-static LPSTR (*True_GetCommandLineA) (
+static LPSTR (WINAPI *True_GetCommandLineA) (
     ) = GetCommandLineA;
 
-static LPSTR Hook_GetCommandLineA(
+static LPSTR WINAPI Hook_GetCommandLineA(
 ) {
     Log("{{ 'HookedFunction': 'GetCommandLineA', 'Parameters': {{}} }}"
         
@@ -191,11 +191,11 @@ static LPSTR Hook_GetCommandLineA(
 }
 
 
-static void (*True_GetStartupInfoW) (
+static void (WINAPI *True_GetStartupInfoW) (
     LPSTARTUPINFOW  lpStartupInfo
     ) = GetStartupInfoW;
 
-static void Hook_GetStartupInfoW(
+static void WINAPI Hook_GetStartupInfoW(
     LPSTARTUPINFOW  lpStartupInfo
 ) {
     Log("{{ 'HookedFunction': 'GetStartupInfoW', 'Parameters': {{}} }}"
@@ -206,13 +206,13 @@ static void Hook_GetStartupInfoW(
 }
 
 
-static HANDLE (*True_OpenMutexA) (
+static HANDLE (WINAPI *True_OpenMutexA) (
     DWORD  dwDesiredAccess, 
     BOOL  bInheritHandle, 
     LPCSTR  lpName
     ) = OpenMutexA;
 
-static HANDLE Hook_OpenMutexA(
+static HANDLE WINAPI Hook_OpenMutexA(
     DWORD  dwDesiredAccess, 
     BOOL  bInheritHandle, 
     LPCSTR  lpName
@@ -225,13 +225,13 @@ static HANDLE Hook_OpenMutexA(
 }
 
 
-static HANDLE (*True_OpenProcess) (
+static HANDLE (WINAPI *True_OpenProcess) (
     DWORD  dwDesiredAccess, 
     BOOL   bInheritHandle, 
     DWORD  dwProcessId
     ) = OpenProcess;
 
-static HANDLE Hook_OpenProcess(
+static HANDLE WINAPI Hook_OpenProcess(
     DWORD  dwDesiredAccess, 
     BOOL   bInheritHandle, 
     DWORD  dwProcessId
@@ -244,11 +244,11 @@ static HANDLE Hook_OpenProcess(
 }
 
 
-static LSTATUS (*True_RegCloseKey) (
+static LSTATUS (WINAPI *True_RegCloseKey) (
     HKEY  hKey
     ) = RegCloseKey;
 
-static LSTATUS Hook_RegCloseKey(
+static LSTATUS WINAPI Hook_RegCloseKey(
     HKEY  hKey
 ) {
     Log("{{ 'HookedFunction': 'RegCloseKey', 'Parameters': {{}} }}"
@@ -259,12 +259,12 @@ static LSTATUS Hook_RegCloseKey(
 }
 
 
-static LSTATUS (*True_RegDeleteKeyA) (
+static LSTATUS (WINAPI *True_RegDeleteKeyA) (
     HKEY    hKey, 
     LPCSTR  lpSubKey
     ) = RegDeleteKeyA;
 
-static LSTATUS Hook_RegDeleteKeyA(
+static LSTATUS WINAPI Hook_RegDeleteKeyA(
     HKEY    hKey, 
     LPCSTR  lpSubKey
 ) {
@@ -276,12 +276,12 @@ static LSTATUS Hook_RegDeleteKeyA(
 }
 
 
-static LSTATUS (*True_RegDeleteValueA) (
+static LSTATUS (WINAPI *True_RegDeleteValueA) (
     HKEY    hKey, 
     LPCSTR  lpValueName
     ) = RegDeleteValueA;
 
-static LSTATUS Hook_RegDeleteValueA(
+static LSTATUS WINAPI Hook_RegDeleteValueA(
     HKEY    hKey, 
     LPCSTR  lpValueName
 ) {
@@ -293,13 +293,13 @@ static LSTATUS Hook_RegDeleteValueA(
 }
 
 
-static LSTATUS (*True_RegOpenKeyA) (
+static LSTATUS (WINAPI *True_RegOpenKeyA) (
     HKEY    hKey, 
     LPCSTR  lpSubKey, 
     PHKEY   phkResult
     ) = RegOpenKeyA;
 
-static LSTATUS Hook_RegOpenKeyA(
+static LSTATUS WINAPI Hook_RegOpenKeyA(
     HKEY    hKey, 
     LPCSTR  lpSubKey, 
     PHKEY   phkResult
@@ -312,13 +312,13 @@ static LSTATUS Hook_RegOpenKeyA(
 }
 
 
-static LSTATUS (*True_RegSaveKeyA) (
+static LSTATUS (WINAPI *True_RegSaveKeyA) (
     HKEY                         hKey, 
     LPCSTR                       lpFile, 
     LPSECURITY_ATTRIBUTES  lpSecurityAttributes
     ) = RegSaveKeyA;
 
-static LSTATUS Hook_RegSaveKeyA(
+static LSTATUS WINAPI Hook_RegSaveKeyA(
     HKEY                         hKey, 
     LPCSTR                       lpFile, 
     LPSECURITY_ATTRIBUTES  lpSecurityAttributes
@@ -331,7 +331,7 @@ static LSTATUS Hook_RegSaveKeyA(
 }
 
 
-static LSTATUS (*True_RegSetValueA) (
+static LSTATUS (WINAPI *True_RegSetValueA) (
     HKEY    hKey, 
     LPCSTR  lpSubKey, 
     DWORD   dwType, 
@@ -339,7 +339,7 @@ static LSTATUS (*True_RegSetValueA) (
     DWORD   cbData
     ) = RegSetValueA;
 
-static LSTATUS Hook_RegSetValueA(
+static LSTATUS WINAPI Hook_RegSetValueA(
     HKEY    hKey, 
     LPCSTR  lpSubKey, 
     DWORD   dwType, 
@@ -354,11 +354,11 @@ static LSTATUS Hook_RegSetValueA(
 }
 
 
-static BOOL (*True_ReleaseMutex) (
+static BOOL (WINAPI *True_ReleaseMutex) (
     HANDLE  hMutex
     ) = ReleaseMutex;
 
-static BOOL Hook_ReleaseMutex(
+static BOOL WINAPI Hook_ReleaseMutex(
     HANDLE  hMutex
 ) {
     Log("{{ 'HookedFunction': 'ReleaseMutex', 'Parameters': {{ 'hMutex': '{}'}} }}"
@@ -369,7 +369,7 @@ static BOOL Hook_ReleaseMutex(
 }
 
 
-static HINSTANCE (*True_ShellExecuteA) (
+static HINSTANCE (WINAPI *True_ShellExecuteA) (
     HWND    hwnd, 
     LPCSTR  lpOperation, 
     LPCSTR  lpFile, 
@@ -378,7 +378,7 @@ static HINSTANCE (*True_ShellExecuteA) (
     INT     nShowCmd
     ) = ShellExecuteA;
 
-static HINSTANCE Hook_ShellExecuteA(
+static HINSTANCE WINAPI Hook_ShellExecuteA(
     HWND    hwnd, 
     LPCSTR  lpOperation, 
     LPCSTR  lpFile, 
@@ -394,11 +394,11 @@ static HINSTANCE Hook_ShellExecuteA(
 }
 
 
-static void (*True_Sleep) (
+static void (WINAPI *True_Sleep) (
     DWORD  dwMilliseconds
     ) = Sleep;
 
-static void Hook_Sleep(
+static void WINAPI Hook_Sleep(
     DWORD  dwMilliseconds
 ) {
     Log("{{ 'HookedFunction': 'Sleep', 'Parameters': {{ 'dwMilliseconds': '{}'}} }}"
