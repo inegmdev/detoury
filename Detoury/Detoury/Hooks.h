@@ -16,6 +16,25 @@
 
 
 
+static BOOL (*True_CopyFileA) (
+    LPCSTR  lpExistingFileName, 
+    LPCSTR  lpNewFileName, 
+    BOOL    bFailIfExists
+    ) = CopyFileA;
+
+static BOOL Hook_CopyFileA(
+    LPCSTR  lpExistingFileName, 
+    LPCSTR  lpNewFileName, 
+    BOOL    bFailIfExists
+) {
+    Log("{{ 'HookedFunction': 'CopyFileA', 'Parameters': {{ 'lpExistingFileName': '{}', 'lpNewFileName': '{}', 'bFailIfExists': '{}'}} }}"
+        , lpExistingFileName, lpNewFileName, bFailIfExists
+    );
+
+    return True_CopyFileA(lpExistingFileName, lpNewFileName, bFailIfExists);
+}
+
+
 static HANDLE (*True_CreateFileA) (
     LPCSTR                 lpFileName, 
     DWORD                  dwDesiredAccess, 
@@ -76,6 +95,21 @@ static BOOL Hook_CreateProcessA(
 }
 
 
+static BOOL (*True_DeleteFileA) (
+    LPCSTR  lpFileName
+    ) = DeleteFileA;
+
+static BOOL Hook_DeleteFileA(
+    LPCSTR  lpFileName
+) {
+    Log("{{ 'HookedFunction': 'DeleteFileA', 'Parameters': {{ 'lpFileName': '{}'}} }}"
+        , lpFileName
+    );
+
+    return True_DeleteFileA(lpFileName);
+}
+
+
 static void (*True_ExitProcess) (
     UINT  uExitCode
     ) = ExitProcess;
@@ -88,6 +122,40 @@ static void Hook_ExitProcess(
     );
 
     return True_ExitProcess(uExitCode);
+}
+
+
+static HANDLE (*True_FindFirstFileA) (
+    LPCSTR              lpFileName, 
+    LPWIN32_FIND_DATAA  lpFindFileData
+    ) = FindFirstFileA;
+
+static HANDLE Hook_FindFirstFileA(
+    LPCSTR              lpFileName, 
+    LPWIN32_FIND_DATAA  lpFindFileData
+) {
+    Log("{{ 'HookedFunction': 'FindFirstFileA', 'Parameters': {{ 'lpFileName': '{}'}} }}"
+        , lpFileName
+    );
+
+    return True_FindFirstFileA(lpFileName, lpFindFileData);
+}
+
+
+static BOOL (*True_FindNextFileA) (
+    HANDLE              hFindFile, 
+    LPWIN32_FIND_DATAA  lpFindFileData
+    ) = FindNextFileA;
+
+static BOOL Hook_FindNextFileA(
+    HANDLE              hFindFile, 
+    LPWIN32_FIND_DATAA  lpFindFileData
+) {
+    Log("{{ 'HookedFunction': 'FindNextFileA', 'Parameters': {{ 'hFindFile': '{}'}} }}"
+        , hFindFile
+    );
+
+    return True_FindNextFileA(hFindFile, lpFindFileData);
 }
 
 
@@ -294,14 +362,26 @@ static void Hook_Sleep(
 
 void DetourAttach_AllHooks() {
     
+    DetourAttach(&True_CopyFileA, Hook_CopyFileA);
+    Log("'Registered `CopyFileA` '");
+    
     DetourAttach(&True_CreateFileA, Hook_CreateFileA);
     Log("'Registered `CreateFileA` '");
     
     DetourAttach(&True_CreateProcessA, Hook_CreateProcessA);
     Log("'Registered `CreateProcessA` '");
     
+    DetourAttach(&True_DeleteFileA, Hook_DeleteFileA);
+    Log("'Registered `DeleteFileA` '");
+    
     DetourAttach(&True_ExitProcess, Hook_ExitProcess);
     Log("'Registered `ExitProcess` '");
+    
+    DetourAttach(&True_FindFirstFileA, Hook_FindFirstFileA);
+    Log("'Registered `FindFirstFileA` '");
+    
+    DetourAttach(&True_FindNextFileA, Hook_FindNextFileA);
+    Log("'Registered `FindNextFileA` '");
     
     DetourAttach(&True_GetCommandLineA, Hook_GetCommandLineA);
     Log("'Registered `GetCommandLineA` '");

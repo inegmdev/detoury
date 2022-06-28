@@ -9,3 +9,5 @@ hwnd
 # RegOpenKeyA
 hKey
 phkResult
+# FindFirstFileA
+lpFindFileData
