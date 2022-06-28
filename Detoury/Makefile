@@ -22,8 +22,9 @@ ifeq ($(arch),32)
 	detours_target=86
 	detoury_out_dir=
 endif
-## Generated Build Command File for Detours
-GEN_DETOURS_BUILD_CMD_FILE=./Build/build_tmp.cmd
+## Generated Build Command File for Detours and Detoury
+GEN_DETOURS_BUILD_CMD_FILE=./Build/build_detours_tmp.cmd
+GEN_DETOURY_BUILD_CMD_FILE=./Build/build_detoury_tmp.cmd
 ## Detours External Dir
 EXTERNAL_DETOURS_DIR_BASH=$(shell realpath ./External/Detours)
 EXTERNAL_DETOURS_DIR_WIN_STEP1=$(subst /c/,C:\,$(EXTERNAL_DETOURS_DIR_BASH))
@@ -33,6 +34,10 @@ SCRIPTS_HOOK_GEN_TOOL_DIR=$(shell realpath ./Tools/Hooks_Generator)
 SCRIPTS_HOOK_GEN_TOOL_VENV_INSTALLED_FLAG=$(SCRIPTS_HOOK_GEN_TOOL_DIR)/venv.installed
 # HOOKS GENETATED FILE
 HOOKS_GENERATED_FILE=$(shell realpath ./Detoury/Hooks.h)
+# DETOURY SOLUTION
+DETOURY_SLN=$(shell realpath ./Detoury/Detoury.sln)
+DETOURY_SLN_WIN_STEP1=$(subst /c/,C:\,$(DETOURY_SLN))
+DETOURY_SLN_WIN=$(subst /,\\,$(DETOURY_SLN_WIN_STEP1))
 
 #######################################################################
 #                               Targets                               #
@@ -147,6 +152,41 @@ hooks_clean:
 hooks: hooks_generate
 #^^^^^^^^^^^^^^^^^^^^^  End of Hooks Generation  ^^^^^^^^^^^^^^^^^^^^^
 
+#vvvvvvvvvvvvvvvvvvvvv Start of Build Commands vvvvvvvvvvvvvvvvvvvvv
+.PHONY:detoury_prebuild
+detoury_prebuild: CMD_BAT=vcvars$(arch).bat
+detoury_prebuild: MS_VC_BUILD_CMD=$(MS_VC_BUILD_CMD_DIR)\$(CMD_BAT)
+detoury_prebuild: MS_VC_BUILD_CMD_ESCAPED=$(subst \,\\,$(MS_VC_BUILD_CMD))
+detoury_prebuild: _header _sanity_checks
+	# Prepare the build command temp file ( $(GEN_DETOURY_BUILD_CMD_FILE) )
+	@rm -f $(GEN_DETOURY_BUILD_CMD_FILE)
+	@echo "@ECHO OFF" > $(GEN_DETOURY_BUILD_CMD_FILE)
+	@echo "CD \"$(DETOURY_SLN_WIN)\"" >> $(GEN_DETOURY_BUILD_CMD_FILE)
+	@echo "ECHO %cd%" >> $(GEN_DETOURY_BUILD_CMD_FILE)
+	@echo "CALL \"$(MS_VC_BUILD_CMD_ESCAPED)\"" >> $(GEN_DETOURY_BUILD_CMD_FILE)
+	@echo "MSBuild $(DETOURY_SLN_WIN) /p:Configuration=Debug /p:Platform=x$(detours_target)" >> $(GEN_DETOURY_BUILD_CMD_FILE)
+	# [Done]
+	#
+
+.PHONY:detoury_build
+detoury_build: GEN_BUILD_DETOURY_CMD_FULL_PATH_STEP1=$(shell realpath $(GEN_DETOURY_BUILD_CMD_FILE))
+detoury_build: GEN_BUILD_DETOURY_CMD_FULL_PATH_STEP2=$(subst /c/,c:\,$(GEN_BUILD_DETOURY_CMD_FULL_PATH_STEP1))
+detoury_build: GEN_BUILD_DETOURY_CMD_FULL_PATH=$(subst /,\,$(GEN_BUILD_DETOURY_CMD_FULL_PATH_STEP2))
+detoury_build: _header _sanity_checks
+	#
+	# Building Detoury in path ( $(DETOURY_SLN) )
+	# Running the batch file ...
+	@cmd.exe /C "$(GEN_BUILD_DETOURY_CMD_FULL_PATH)"
+	# [Done] Successfully built MS Detours
+	#
+
+.PHONY: detoury
+detoury: detoury_prebuild detoury_build
+
+.PHONY: build
+build: ms-detours hooks detoury
+#^^^^^^^^^^^^^^^^^^^^^  End of Build Commands  ^^^^^^^^^^^^^^^^^^^^^
+
 #vvvvvvvvvvvvvvvvvvvvv Start of Test Commands vvvvvvvvvvvvvvvvvvvvv
 .PHONY: test_with_app
 test_with_app: CUR_DIR=$(shell realpath .)
@@ -186,7 +226,9 @@ install: detoury_install withdll_install
 
 .PHONY: delivery
 delivery:
+	$(MAKE) build arch=64
 	$(MAKE) install arch=64
+	$(MAKE) build arch=32
 	$(MAKE) install arch=32
 
 #^^^^^^^^^^^^^^^^^^^^^  End of Install Commands  ^^^^^^^^^^^^^^^^^^^^^
