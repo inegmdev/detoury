@@ -4,3 +4,5 @@ lpProcessAttributes
 lpThreadAttributes
 lpStartupInfo
 lpProcessInformation
+# ShellExecuteA
+hwnd

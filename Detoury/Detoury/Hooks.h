@@ -35,8 +35,8 @@ static HANDLE Hook_CreateFileA(
     DWORD dwFlagsAndAttributes, 
     HANDLE hTemplateFile
 ) {
-    Log("{{ 'HookedFunction': 'CreateFileA', 'Parameters': {{ 'lpFileName': '{}', 'dwDesiredAccess': '{}', 'dwShareMode': '{}', 'dwCreationDisposition': '{}', 'dwFlagsAndAttributes': '{}', 'hTemplateFile': '{}'}} }}",
-         lpFileName, dwDesiredAccess, dwShareMode, dwCreationDisposition, dwFlagsAndAttributes, hTemplateFile
+    Log("{{ 'HookedFunction': 'CreateFileA', 'Parameters': {{ 'lpFileName': '{}', 'dwDesiredAccess': '{}', 'dwShareMode': '{}', 'dwCreationDisposition': '{}', 'dwFlagsAndAttributes': '{}', 'hTemplateFile': '{}'}} }}"
+        , lpFileName, dwDesiredAccess, dwShareMode, dwCreationDisposition, dwFlagsAndAttributes, hTemplateFile
     );
 
     return True_CreateFileA(lpFileName, dwDesiredAccess, dwShareMode, lpSecurityAttributes, dwCreationDisposition, dwFlagsAndAttributes, hTemplateFile);
@@ -68,11 +68,98 @@ static BOOL Hook_CreateProcessA(
     LPSTARTUPINFOA lpStartupInfo, 
     LPPROCESS_INFORMATION lpProcessInformation
 ) {
-    Log("{{ 'HookedFunction': 'CreateProcessA', 'Parameters': {{ 'lpApplicationName': '{}', 'lpCommandLine': '{}', 'bInheritHandles': '{}', 'dwCreationFlags': '{}', 'lpEnvironment': '{}', 'lpCurrentDirectory': '{}'}} }}",
-         lpApplicationName, lpCommandLine, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory
+    Log("{{ 'HookedFunction': 'CreateProcessA', 'Parameters': {{ 'lpApplicationName': '{}', 'lpCommandLine': '{}', 'bInheritHandles': '{}', 'dwCreationFlags': '{}', 'lpEnvironment': '{}', 'lpCurrentDirectory': '{}'}} }}"
+        , lpApplicationName, lpCommandLine, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory
     );
 
     return True_CreateProcessA(lpApplicationName, lpCommandLine, lpProcessAttributes, lpThreadAttributes, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation);
+}
+
+
+static void (*True_ExitProcess) (
+    UINT uExitCode
+    ) = ExitProcess;
+
+static void Hook_ExitProcess(
+    UINT uExitCode
+) {
+    Log("{{ 'HookedFunction': 'ExitProcess', 'Parameters': {{ 'uExitCode': '{}'}} }}"
+        , uExitCode
+    );
+
+    return True_ExitProcess(uExitCode);
+}
+
+
+static LPSTR (*True_GetCommandLineA) (
+    ) = GetCommandLineA;
+
+static LPSTR Hook_GetCommandLineA(
+) {
+    Log("{{ 'HookedFunction': 'GetCommandLineA', 'Parameters': {{}} }}"
+        
+    );
+
+    return True_GetCommandLineA();
+}
+
+
+static void (*True_GetStartupInfoW) (
+    LPSTARTUPINFOW lpStartupInfo
+    ) = GetStartupInfoW;
+
+static void Hook_GetStartupInfoW(
+    LPSTARTUPINFOW lpStartupInfo
+) {
+    Log("{{ 'HookedFunction': 'GetStartupInfoW', 'Parameters': {{}} }}"
+        
+    );
+
+    return True_GetStartupInfoW(lpStartupInfo);
+}
+
+
+static HANDLE (*True_OpenProcess) (
+    DWORD dwDesiredAccess, 
+    BOOL bInheritHandle, 
+    DWORD dwProcessId
+    ) = OpenProcess;
+
+static HANDLE Hook_OpenProcess(
+    DWORD dwDesiredAccess, 
+    BOOL bInheritHandle, 
+    DWORD dwProcessId
+) {
+    Log("{{ 'HookedFunction': 'OpenProcess', 'Parameters': {{ 'dwDesiredAccess': '{}', 'bInheritHandle': '{}', 'dwProcessId': '{}'}} }}"
+        , dwDesiredAccess, bInheritHandle, dwProcessId
+    );
+
+    return True_OpenProcess(dwDesiredAccess, bInheritHandle, dwProcessId);
+}
+
+
+static HINSTANCE (*True_ShellExecuteA) (
+    HWND hwnd, 
+    LPCSTR lpOperation, 
+    LPCSTR lpFile, 
+    LPCSTR lpParameters, 
+    LPCSTR lpDirectory, 
+    INT nShowCmd
+    ) = ShellExecuteA;
+
+static HINSTANCE Hook_ShellExecuteA(
+    HWND hwnd, 
+    LPCSTR lpOperation, 
+    LPCSTR lpFile, 
+    LPCSTR lpParameters, 
+    LPCSTR lpDirectory, 
+    INT nShowCmd
+) {
+    Log("{{ 'HookedFunction': 'ShellExecuteA', 'Parameters': {{ 'lpOperation': '{}', 'lpFile': '{}', 'lpParameters': '{}', 'lpDirectory': '{}', 'nShowCmd': '{}'}} }}"
+        , lpOperation, lpFile, lpParameters, lpDirectory, nShowCmd
+    );
+
+    return True_ShellExecuteA(hwnd, lpOperation, lpFile, lpParameters, lpDirectory, nShowCmd);
 }
 
 
@@ -83,8 +170,8 @@ static void (*True_Sleep) (
 static void Hook_Sleep(
     DWORD dwMilliseconds
 ) {
-    Log("{{ 'HookedFunction': 'Sleep', 'Parameters': {{ 'dwMilliseconds': '{}'}} }}",
-         dwMilliseconds
+    Log("{{ 'HookedFunction': 'Sleep', 'Parameters': {{ 'dwMilliseconds': '{}'}} }}"
+        , dwMilliseconds
     );
 
     return True_Sleep(dwMilliseconds);
@@ -102,6 +189,21 @@ void DetourAttach_AllHooks() {
     
     DetourAttach(&True_CreateProcessA, Hook_CreateProcessA);
     Log("'Registered `CreateProcessA` '");
+    
+    DetourAttach(&True_ExitProcess, Hook_ExitProcess);
+    Log("'Registered `ExitProcess` '");
+    
+    DetourAttach(&True_GetCommandLineA, Hook_GetCommandLineA);
+    Log("'Registered `GetCommandLineA` '");
+    
+    DetourAttach(&True_GetStartupInfoW, Hook_GetStartupInfoW);
+    Log("'Registered `GetStartupInfoW` '");
+    
+    DetourAttach(&True_OpenProcess, Hook_OpenProcess);
+    Log("'Registered `OpenProcess` '");
+    
+    DetourAttach(&True_ShellExecuteA, Hook_ShellExecuteA);
+    Log("'Registered `ShellExecuteA` '");
     
     DetourAttach(&True_Sleep, Hook_Sleep);
     Log("'Registered `Sleep` '");

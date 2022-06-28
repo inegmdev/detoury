@@ -1,0 +1,3 @@
+void GetStartupInfoW(
+  [out] LPSTARTUPINFOW lpStartupInfo
+);
