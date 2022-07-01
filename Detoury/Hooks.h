@@ -409,6 +409,50 @@ static void WINAPI Hook_Sleep(
 }
 
 
+static LPVOID (WINAPI *True_VirtualAlloc) (
+    LPVOID  lpAddress, 
+    SIZE_T  dwSize, 
+    DWORD   flAllocationType, 
+    DWORD   flProtect
+    ) = VirtualAlloc;
+
+static LPVOID WINAPI Hook_VirtualAlloc(
+    LPVOID  lpAddress, 
+    SIZE_T  dwSize, 
+    DWORD   flAllocationType, 
+    DWORD   flProtect
+) {
+    Log("{{ \"HookedFunction\": \"VirtualAlloc\", \"Parameters\": {{ \"lpAddress\": \"{}\", \"dwSize\": \"{}\", \"flAllocationType\": \"{}\", \"flProtect\": \"{}\"}} }}"
+        , lpAddress, dwSize, flAllocationType, flProtect
+    );
+
+    return True_VirtualAlloc(lpAddress, dwSize, flAllocationType, flProtect);
+}
+
+
+static LPVOID (WINAPI *True_VirtualAllocEx) (
+    HANDLE  hProcess, 
+    LPVOID  lpAddress, 
+    SIZE_T  dwSize, 
+    DWORD   flAllocationType, 
+    DWORD   flProtect
+    ) = VirtualAllocEx;
+
+static LPVOID WINAPI Hook_VirtualAllocEx(
+    HANDLE  hProcess, 
+    LPVOID  lpAddress, 
+    SIZE_T  dwSize, 
+    DWORD   flAllocationType, 
+    DWORD   flProtect
+) {
+    Log("{{ \"HookedFunction\": \"VirtualAllocEx\", \"Parameters\": {{ \"hProcess\": \"{}\", \"lpAddress\": \"{}\", \"dwSize\": \"{}\", \"flAllocationType\": \"{}\", \"flProtect\": \"{}\"}} }}"
+        , hProcess, lpAddress, dwSize, flAllocationType, flProtect
+    );
+
+    return True_VirtualAllocEx(hProcess, lpAddress, dwSize, flAllocationType, flProtect);
+}
+
+
 /*****************************************************************************/
 /*                               DETOUR ATTACH                               */
 /*****************************************************************************/
@@ -477,5 +521,11 @@ void DetourAttach_AllHooks() {
     
     DetourAttach(&True_Sleep, Hook_Sleep);
     Log("\"Registered `Sleep` \"");
+    
+    DetourAttach(&True_VirtualAlloc, Hook_VirtualAlloc);
+    Log("\"Registered `VirtualAlloc` \"");
+    
+    DetourAttach(&True_VirtualAllocEx, Hook_VirtualAllocEx);
+    Log("\"Registered `VirtualAllocEx` \"");
     
 }
