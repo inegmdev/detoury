@@ -1,4 +1,2 @@
-# Anything under Build
-Build/
-Release/
-Detoury/Debug/
+.vs/
+x64/
