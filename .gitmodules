@@ -1,6 +1,0 @@
-[submodule "External/Detours"]
-	path = External/Detours
-	url = https://github.com/microsoft/Detours.git
-[submodule "External/spdlog"]
-	path = External/spdlog
-	url = https://github.com/gabime/spdlog.git
