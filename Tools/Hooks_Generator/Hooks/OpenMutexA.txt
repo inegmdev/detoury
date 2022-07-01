@@ -1,0 +1,5 @@
+HANDLE OpenMutexA(
+  [in] DWORD dwDesiredAccess,
+  [in] BOOL bInheritHandle,
+  [in] LPCSTR lpName
+);

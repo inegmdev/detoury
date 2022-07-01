@@ -1,0 +1,4 @@
+# Python environment
+venv/
+# Flag files
+venv.installed

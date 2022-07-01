@@ -1,0 +1,15 @@
+lpSecurityAttributes
+# CreateProcessA
+lpProcessAttributes
+lpThreadAttributes
+lpStartupInfo
+lpProcessInformation
+# ShellExecuteA
+hwnd
+# RegOpenKeyA
+hKey
+phkResult
+# FindFirstFileA
+lpFindFileData
+# CreateMutexA
+lpMutexAttributes
